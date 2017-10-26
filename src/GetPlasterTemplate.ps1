@@ -11,6 +11,14 @@ function Get-PlasterTemplate {
         $Path,
 
         [Parameter(ParameterSetName="Path",
+                   HelpMessage="Optional. Indicates the type of template to be returned.")]
+        [Parameter(ParameterSetName="IncludedTemplates",
+                   HelpMessage="Optional. Indicates the type of template to be returned.")]
+        [ValidateSet('Item', 'Project')]
+        [string]
+        $TemplateType,
+
+        [Parameter(ParameterSetName="Path",
                    HelpMessage="Indicates that this cmdlet gets the items in the specified locations and in all child items of the locations.")]
         [switch]
         $Recurse,
@@ -37,10 +45,14 @@ function Get-PlasterTemplate {
                 Description = $metadata["description"].InnerText
                 Tags = $metadata["tags"].InnerText.split(",") | % { $_.Trim() }
                 TemplatePath = $manifestPath.Directory.FullName
+                TemplateType = $manifestXml["plasterManifest"].templateType
             }
 
-            $manifestObj.PSTypeNames.Insert(0, "Microsoft.PowerShell.Plaster.PlasterTemplate")
-            return $manifestObj
+            # Only return the manifest object if it is the desired template type
+            if ($TemplateType -eq '' -or $TemplateType -eq $manifestObj.TemplateType) {
+                $manifestObj.PSTypeNames.Insert(0, "Microsoft.PowerShell.Plaster.PlasterTemplate")
+                return $manifestObj
+            }
         }
 
         function GetManifestsUnderPath([string]$rootPath, [bool]$recurse) {

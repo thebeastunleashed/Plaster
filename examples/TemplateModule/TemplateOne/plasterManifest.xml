@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plasterManifest
+  templateType="Item"
   schemaVersion="0.4" xmlns="http://www.microsoft.com/schemas/PowerShell/Plaster/v1">
   <metadata>
     <name>TemplateOneTemplate</name>
